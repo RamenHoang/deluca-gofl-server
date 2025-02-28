@@ -20,6 +20,8 @@ const staffRouter = require("./routes/staff.route");
 const commentRouter = require("./routes/comment.route");
 const bannerRouter = require("./routes/banner.route");
 const dashboardRouter = require("./routes/dashboard.route");
+const optionRouter = require('./routes/option.route');
+const optionValueRouter = require('./routes/option_value.route');
 
 //Define router client
 const homeRouter = require("./routes/home.route");
@@ -44,6 +46,7 @@ app.use(cookieParser());
 // for parsing application/json
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
 app.get("/", (req, res) => {
   res.status(200).json({ data: "Vương đầu heo" });
 });
@@ -57,6 +60,8 @@ app.use("/api/companies", authUser.isAdmin, companyRouter);
 app.use("/api/staffs", authUser.isAdmin, staffRouter);
 app.use("/api/banners", authUser.isAdmin, bannerRouter);
 app.use("/api/dashboards", authUser.isAdmin, dashboardRouter);
+app.use("/api/options", authUser.isAdmin, optionRouter);
+app.use("/api/option-values", authUser.isAdmin, optionValueRouter);
 
 app.use("/api/users", authUser.isLogin, userRouter);
 app.use("/api/comments", commentRouter);

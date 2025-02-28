@@ -8,7 +8,7 @@ const router = express.Router();
 router.get("/", productController.getAllProducts);
 router.post(
   "/",
-  upload.single("p_image_detail"),
+  upload.array("p_images"),
   productController.addNewProduct
 );
 router.get("/:id", productController.getByIdProduct);

@@ -1,5 +1,15 @@
 const mongoose = require('mongoose');
 
+const VariantSchema = new mongoose.Schema({
+    option_value: { type: mongoose.Schema.Types.ObjectId, ref: "OptionValue", required: true }, // Tham chiếu đến OptionValue
+    stock: { type: Number, default: 0 }
+});
+
+const ImageSchema = new mongoose.Schema({
+    public_id: String,
+    url: String
+});
+
 const ProductSchema = mongoose.Schema({
     p_name: String,
     p_code: String,
@@ -10,13 +20,12 @@ const ProductSchema = mongoose.Schema({
     p_quantity: Number,
     p_status: { type: String, default: "Còn hàng" },
     p_datepublic: { type: String, default: null },
-    p_image_detail: { public_id: String, url: String },
+    p_images: [ImageSchema],
     p_description: { type: String, default: null },
     category: { type: mongoose.Schema.Types.ObjectId, ref: 'Category' },
-    author: [
-        { type: mongoose.Schema.Types.ObjectId, ref: 'Author' }
-    ],
-    company: { type: mongoose.Schema.Types.ObjectId, ref: 'Company' },
+    variants: [VariantSchema],
+    rating: { type: Number, default: 0 },
+    number_of_rating: { type: Number, default: 0 },
     createdAt: { type: Date, default: new Date() }
 });
 
@@ -24,23 +33,28 @@ ProductSchema.statics = {
     getAllProducts() {
         return this.find({})
             .populate('category')
-            .populate('author')
-            .populate('company')
+            .populate('variants.option_value')
             .sort({ createdAt: -1 }).exec();
     },
 
     getByIdProduct(id) {
         return this.findById(id)
             .populate('category')
-            .populate('author')
-            .populate('company').exec();
+            .populate({
+                path: 'variants.option_value',
+                populate: {
+                    path: 'option_id',
+                    model: 'Option'
+                }
+            })
+            .exec();
     },
 
     getManyBookInArray(arr) {
         return this.find({ '_id': { $in: arr } })
             .populate('category')
-            .populate('author')
-            .populate('company').exec();
+            .populate('variants.option_value')
+            .exec();
     },
 
     addNewProduct(product) {
@@ -81,8 +95,7 @@ ProductSchema.statics = {
             createdAt: -1
         })
             .populate('category')
-            .populate('author')
-            .populate('company')
+            .populate('variants.option_value')
             .limit(7).exec();
     },
 
@@ -91,8 +104,7 @@ ProductSchema.statics = {
             createdAt: -1
         })
             .populate('category')
-            .populate('author')
-            .populate('company')
+            .populate('variants.option_value')
             .limit(7).exec();
     },
 
@@ -103,8 +115,7 @@ ProductSchema.statics = {
     getBooksByCateId(cateId) {
         return this.find({ category: cateId })
             .populate('category')
-            .populate('author')
-            .populate('company')
+            .populate('variants.option_value')
             .exec();
     },
 
@@ -115,8 +126,7 @@ ProductSchema.statics = {
     getBooksWithPrice(data) {
         return this.find(data)
             .populate('category')
-            .populate('author')
-            .populate('company')
+            .populate('variants.option_value')
             .exec();
     },
 
@@ -131,8 +141,8 @@ ProductSchema.statics = {
                 { _id: { $ne: currentBookId } }
             ]
         }).populate('category')
-        .populate('author')
-        .populate('company').limit(10).exec();
+        .populate('options')
+        .populate('variants.option_value').limit(10).exec();
     },
 
     //filter price
@@ -144,8 +154,7 @@ ProductSchema.statics = {
             ]
         })
             .populate('category')
-            .populate('author')
-            .populate('compny')
+            .populate('variants.option_value')
             .exec();
     },
 
@@ -158,8 +167,7 @@ ProductSchema.statics = {
             ]
         })
             .populate('category')
-            .populate('author')
-            .populate('compny')
+            .populate('variants.option_value')
             .exec();
     },
 
@@ -171,8 +179,7 @@ ProductSchema.statics = {
             ]
         })
             .populate('category')
-            .populate('author')
-            .populate('company')
+            .populate('variants.option_value')
             .exec();
     },
 
@@ -188,8 +195,7 @@ ProductSchema.statics = {
             ]
         })
             .populate('category')
-            .populate('author')
-            .populate('company')
+            .populate('variants.option_value')
             .exec();
     }
 
