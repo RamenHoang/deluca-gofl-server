@@ -26,29 +26,44 @@ let addNewProduct = async (productItem) => {
     return { message: "PRODUCT_EXISTS" };
   }
 
-  let responseUploadDetail = await cloudinary.uploader.upload(
-    formatBufferToBase64(productItem.p_image_detail).content,
-    {
-      upload_preset: process.env.UPLOAD_PRESET,
-    }
+  let responseUploadDetails = await Promise.all(
+    productItem.p_images.map(image =>
+      cloudinary.uploader.upload(formatBufferToBase64(image).content, {
+        upload_preset: process.env.UPLOAD_PRESET,
+      })
+    )
   );
 
-  if (!responseUploadDetail) {
+  if (responseUploadDetails.some(response => !response)) {
     return { message: "UPLOAD_FAILED" };
   }
 
-  let responseData = {
-    public_id: responseUploadDetail.public_id,
-    url: responseUploadDetail.secure_url,
-  };
+  let responseData = responseUploadDetails.map(response => ({
+    public_id: response.public_id,
+    url: response.secure_url,
+  }));
 
-  delete productItem.p_image_detail;
+  delete productItem.p_images;
 
   productItem = {
     ...productItem,
-    p_image_detail: responseData,
+    p_images: responseData,
     p_slug: slugify(productItem.p_name),
   };
+
+  // Ensure only the last item in the same option_value group is retained
+  if (!productItem.variants) {
+    productItem.variants = [];
+  }
+  const uniqueVariants = [];
+  const optionValueSet = new Set();
+  for (let i = productItem.variants.length - 1; i >= 0; i--) {
+    if (!optionValueSet.has(productItem.variants[i].option_value.toString())) {
+      uniqueVariants.push(productItem.variants[i]);
+      optionValueSet.add(productItem.variants[i].option_value.toString());
+    }
+  }
+  productItem.variants = uniqueVariants.reverse();
 
   let newProduct = await productModel.addNewProduct(productItem);
 
@@ -62,11 +77,13 @@ let deleteByIdProduct = async (productId) => {
     return { message: "PRODUCT_NOT_FOUND" };
   }
 
-  let responseDestroyAvatar = await cloudinary.uploader.destroy(
-    product.p_image_detail.public_id
+  let responseDestroyAvatars = await Promise.all(
+    product.p_images.map(image =>
+      cloudinary.uploader.destroy(image.public_id)
+    )
   );
 
-  if (!responseDestroyAvatar) {
+  if (responseDestroyAvatars.some(response => !response)) {
     return { message: "DESTROY_IMAGE_FAILED" };
   }
 
@@ -92,47 +109,54 @@ let updateProductById = async (id, data) => {
     return { message: "EXISTS_CODE" };
   }
 
-  if (!data.p_image_detail) {
-    delete data.p_image_detail;
-    data = {
-      ...data,
-      p_slug: slugify(data.p_name),
-    };
-    await productModel.updateProductById(id, data);
-    return { message: "SUCCESS" };
-  }
+  if (data.p_images) {
+    let responseDestroyAvatars = await Promise.all(
+      product.p_images.map(image =>
+        cloudinary.uploader.destroy(image.public_id)
+      )
+    );
 
-  let responseDestroyAvatar = await cloudinary.uploader.destroy(
-    product.p_image_detail.public_id
-  );
-
-  if (!responseDestroyAvatar) {
-    return { message: "DESTROY_IMAGE_FAILED" };
-  }
-
-  let responseUploadDetail = await cloudinary.uploader.upload(
-    formatBufferToBase64(data.p_image_detail).content,
-    {
-      upload_preset: process.env.UPLOAD_PRESET,
+    if (responseDestroyAvatars.some(response => !response)) {
+      return { message: "DESTROY_IMAGE_FAILED" };
     }
-  );
 
-  if (!responseUploadDetail) {
-    return { message: "UPLOAD_FAILED" };
+    let responseUploadDetails = await Promise.all(
+      data.p_images.map(image =>
+        cloudinary.uploader.upload(formatBufferToBase64(image).content, {
+          upload_preset: process.env.UPLOAD_PRESET,
+        })
+      )
+    );
+
+    if (responseUploadDetails.some(response => !response)) {
+      return { message: "UPLOAD_FAILED" };
+    }
+
+    let responseData = responseUploadDetails.map(response => ({
+      public_id: response.public_id,
+      url: response.secure_url,
+    }));
+
+    data.p_images = responseData;
+  } else {
+    delete data.p_images;
   }
-
-  let responseData = {
-    public_id: responseUploadDetail.public_id,
-    url: responseUploadDetail.secure_url,
-  };
-
-  delete data.p_image_detail;
 
   data = {
     ...data,
-    p_image_detail: responseData,
     p_slug: slugify(data.p_name),
   };
+
+  // Ensure only the last item in the same option_value group is retained
+  const uniqueVariants = [];
+  const optionValueSet = new Set();
+  for (let i = data.variants.length - 1; i >= 0; i--) {
+    if (!optionValueSet.has(data.variants[i].option_value.toString())) {
+      uniqueVariants.push(data.variants[i]);
+      optionValueSet.add(data.variants[i].option_value.toString());
+    }
+  }
+  data.variants = uniqueVariants.reverse();
 
   await productModel.updateProductById(id, data);
 

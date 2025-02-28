@@ -15,7 +15,7 @@ let addNewProduct = async (req, res) => {
     let productItem = req.body;
     productItem = {
       ...productItem,
-      p_image_detail: req.file,
+      p_images: req.files,
     };
     let product = await productService.addNewProduct(productItem);
 
@@ -52,7 +52,7 @@ let updateProductById = async (req, res) => {
     let id = req.params.id;
     let data = {
       ...req.body,
-      p_image_detail: req.file,
+      p_images: req.files.p_images,
     };
     let product = await productService.updateProductById(id, data);
 
