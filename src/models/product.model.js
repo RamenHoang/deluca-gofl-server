@@ -1,13 +1,14 @@
 const mongoose = require('mongoose');
 
-const VariantSchema = new mongoose.Schema({
-    option_value: { type: mongoose.Schema.Types.ObjectId, ref: "OptionValue", required: true }, // Tham chiếu đến OptionValue
-    stock: { type: Number, default: 0 }
-});
-
 const ImageSchema = new mongoose.Schema({
     public_id: String,
     url: String
+});
+
+const VariantSchema = new mongoose.Schema({
+    option_values: [{ type: mongoose.Schema.Types.ObjectId, ref: "OptionValue", required: true }], // Tham chiếu đến OptionValue
+    stock: { type: Number, default: 0 },
+    image: { type: ImageSchema, default: null }
 });
 
 const ProductSchema = mongoose.Schema({
@@ -20,7 +21,6 @@ const ProductSchema = mongoose.Schema({
     p_quantity: Number,
     p_status: { type: String, default: "Còn hàng" },
     p_datepublic: { type: String, default: null },
-    p_images: [ImageSchema],
     p_description: { type: String, default: null },
     category: { type: mongoose.Schema.Types.ObjectId, ref: 'Category' },
     variants: [VariantSchema],
@@ -33,7 +33,13 @@ ProductSchema.statics = {
     getAllProducts() {
         return this.find({})
             .populate('category')
-            .populate('variants.option_value')
+            .populate({
+                path: 'variants.option_values',
+                populate: {
+                    path: 'option',
+                    model: 'Option'
+                }
+            })
             .sort({ createdAt: -1 }).exec();
     },
 
@@ -41,9 +47,9 @@ ProductSchema.statics = {
         return this.findById(id)
             .populate('category')
             .populate({
-                path: 'variants.option_value',
+                path: 'variants.option_values',
                 populate: {
-                    path: 'option_id',
+                    path: 'option',
                     model: 'Option'
                 }
             })
@@ -53,7 +59,13 @@ ProductSchema.statics = {
     getManyBookInArray(arr) {
         return this.find({ '_id': { $in: arr } })
             .populate('category')
-            .populate('variants.option_value')
+            .populate({
+                path: 'variants.option_values',
+                populate: {
+                    path: 'option',
+                    model: 'Option'
+                }
+            })
             .exec();
     },
 
@@ -95,7 +107,13 @@ ProductSchema.statics = {
             createdAt: -1
         })
             .populate('category')
-            .populate('variants.option_value')
+            .populate({
+                path: 'variants.option_values',
+                populate: {
+                    path: 'option',
+                    model: 'Option'
+                }
+            })
             .limit(7).exec();
     },
 
@@ -104,7 +122,13 @@ ProductSchema.statics = {
             createdAt: -1
         })
             .populate('category')
-            .populate('variants.option_value')
+            .populate({
+                path: 'variants.option_values',
+                populate: {
+                    path: 'option',
+                    model: 'Option'
+                }
+            })
             .limit(7).exec();
     },
 
@@ -115,7 +139,13 @@ ProductSchema.statics = {
     getBooksByCateId(cateId) {
         return this.find({ category: cateId })
             .populate('category')
-            .populate('variants.option_value')
+            .populate({
+                path: 'variants.option_values',
+                populate: {
+                    path: 'option',
+                    model: 'Option'
+                }
+            })
             .exec();
     },
 
@@ -126,7 +156,13 @@ ProductSchema.statics = {
     getBooksWithPrice(data) {
         return this.find(data)
             .populate('category')
-            .populate('variants.option_value')
+            .populate({
+                path: 'variants.option_values',
+                populate: {
+                    path: 'option',
+                    model: 'Option'
+                }
+            })
             .exec();
     },
 
@@ -142,7 +178,13 @@ ProductSchema.statics = {
             ]
         }).populate('category')
         .populate('options')
-        .populate('variants.option_value').limit(10).exec();
+        .populate({
+            path: 'variants.option_values',
+            populate: {
+                path: 'option',
+                model: 'Option'
+            }
+        }).limit(10).exec();
     },
 
     //filter price
@@ -154,7 +196,13 @@ ProductSchema.statics = {
             ]
         })
             .populate('category')
-            .populate('variants.option_value')
+            .populate({
+                path: 'variants.option_values',
+                populate: {
+                    path: 'option',
+                    model: 'Option'
+                }
+            })
             .exec();
     },
 
@@ -167,7 +215,13 @@ ProductSchema.statics = {
             ]
         })
             .populate('category')
-            .populate('variants.option_value')
+            .populate({
+                path: 'variants.option_values',
+                populate: {
+                    path: 'option',
+                    model: 'Option'
+                }
+            })
             .exec();
     },
 
@@ -179,7 +233,13 @@ ProductSchema.statics = {
             ]
         })
             .populate('category')
-            .populate('variants.option_value')
+            .populate({
+                path: 'variants.option_values',
+                populate: {
+                    path: 'option',
+                    model: 'Option'
+                }
+            })
             .exec();
     },
 
@@ -195,7 +255,13 @@ ProductSchema.statics = {
             ]
         })
             .populate('category')
-            .populate('variants.option_value')
+            .populate({
+                path: 'variants.option_values',
+                populate: {
+                    path: 'option',
+                    model: 'Option'
+                }
+            })
             .exec();
     }
 

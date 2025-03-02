@@ -8,13 +8,13 @@ const router = express.Router();
 router.get("/", productController.getAllProducts);
 router.post(
   "/",
-  upload.array("p_images"),
+  upload.array("variant_images"),
   productController.addNewProduct
 );
 router.get("/:id", productController.getByIdProduct);
 router.put(
   "/:id",
-  upload.single("p_image_detail"),
+  upload.fields([{ name: 'p_images' }, { name: 'variant_images' }]),
   productController.updateProductById
 );
 router.delete("/:id", productController.deleteByIdProduct);

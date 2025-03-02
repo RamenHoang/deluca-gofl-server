@@ -26,30 +26,27 @@ let addNewProduct = async (productItem) => {
     return { message: "PRODUCT_EXISTS" };
   }
 
-  let responseUploadDetails = await Promise.all(
-    productItem.p_images.map(image =>
-      cloudinary.uploader.upload(formatBufferToBase64(image).content, {
-        upload_preset: process.env.UPLOAD_PRESET,
-      })
-    )
-  );
-
-  if (responseUploadDetails.some(response => !response)) {
-    return { message: "UPLOAD_FAILED" };
-  }
-
-  let responseData = responseUploadDetails.map(response => ({
-    public_id: response.public_id,
-    url: response.secure_url,
-  }));
-
-  delete productItem.p_images;
-
   productItem = {
     ...productItem,
-    p_images: responseData,
     p_slug: slugify(productItem.p_name),
   };
+
+  // Process variant images
+  if (productItem.variants) {
+    for (let i = 0; i < productItem.variants.length; i++) {
+      if (productItem.variant_images[i]) {
+        let variantImageResponse = await cloudinary.uploader.upload(formatBufferToBase64(productItem.variant_images[i]).content, {
+          upload_preset: process.env.UPLOAD_PRESET,
+        });
+        productItem.variants[i].image = {
+          public_id: variantImageResponse.public_id,
+          url: variantImageResponse.secure_url,
+        };
+      }
+    }
+  }
+
+  delete productItem.variant_images;
 
   // Ensure only the last item in the same option_value group is retained
   if (!productItem.variants) {
@@ -58,9 +55,9 @@ let addNewProduct = async (productItem) => {
   const uniqueVariants = [];
   const optionValueSet = new Set();
   for (let i = productItem.variants.length - 1; i >= 0; i--) {
-    if (!optionValueSet.has(productItem.variants[i].option_value.toString())) {
+    if (!optionValueSet.has(productItem.variants[i].option_values.toString())) {
       uniqueVariants.push(productItem.variants[i]);
-      optionValueSet.add(productItem.variants[i].option_value.toString());
+      optionValueSet.add(productItem.variants[i].option_values.toString());
     }
   }
   productItem.variants = uniqueVariants.reverse();
@@ -141,6 +138,23 @@ let updateProductById = async (id, data) => {
   } else {
     delete data.p_images;
   }
+
+  // Process variant images
+  if (data.variants) {
+    for (let i = 0; i < data.variants.length; i++) {
+      if (data.variant_images[i]) {
+        let variantImageResponse = await cloudinary.uploader.upload(formatBufferToBase64(data.variant_images[i]).content, {
+          upload_preset: process.env.UPLOAD_PRESET,
+        });
+        data.variants[i].image = {
+          public_id: variantImageResponse.public_id,
+          url: variantImageResponse.secure_url,
+        };
+      }
+    }
+  }
+
+  delete data.variant_images;
 
   data = {
     ...data,

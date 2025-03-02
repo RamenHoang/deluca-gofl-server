@@ -15,7 +15,7 @@ let addNewProduct = async (req, res) => {
     let productItem = req.body;
     productItem = {
       ...productItem,
-      p_images: req.files,
+      variant_images: req.files,
     };
     let product = await productService.addNewProduct(productItem);
 
