@@ -52,7 +52,6 @@ let updateProductById = async (req, res) => {
     let id = req.params.id;
     let data = {
       ...req.body,
-      p_images: req.files.p_images,
     };
     let product = await productService.updateProductById(id, data);
 
