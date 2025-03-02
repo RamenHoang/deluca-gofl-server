@@ -32,7 +32,7 @@ const filterRouter = require("./routes/filter.route");
 const app = express();
 
 //Connect database
-ConnectDB(process.env.DB_URL);
+ConnectDB("mongodb+srv://anhnguyenhoang321:bYo0LC1EarVkL2Li@deluca.bxrey.mongodb.net/DELUCA?retryWrites=true&w=majority&appName=DELUCA");
 
 //Config session
 configSession(app);
