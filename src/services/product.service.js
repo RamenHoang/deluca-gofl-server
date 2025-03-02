@@ -106,55 +106,22 @@ let updateProductById = async (id, data) => {
     return { message: "EXISTS_CODE" };
   }
 
-  if (data.p_images) {
-    let responseDestroyAvatars = await Promise.all(
-      product.p_images.map(image =>
-        cloudinary.uploader.destroy(image.public_id)
-      )
-    );
-
-    if (responseDestroyAvatars.some(response => !response)) {
-      return { message: "DESTROY_IMAGE_FAILED" };
-    }
-
-    let responseUploadDetails = await Promise.all(
-      data.p_images.map(image =>
-        cloudinary.uploader.upload(formatBufferToBase64(image).content, {
-          upload_preset: process.env.UPLOAD_PRESET,
-        })
-      )
-    );
-
-    if (responseUploadDetails.some(response => !response)) {
-      return { message: "UPLOAD_FAILED" };
-    }
-
-    let responseData = responseUploadDetails.map(response => ({
-      public_id: response.public_id,
-      url: response.secure_url,
-    }));
-
-    data.p_images = responseData;
-  } else {
-    delete data.p_images;
-  }
-
   // Process variant images
   if (data.variants) {
     for (let i = 0; i < data.variants.length; i++) {
-      if (data.variant_images[i]) {
-        let variantImageResponse = await cloudinary.uploader.upload(formatBufferToBase64(data.variant_images[i]).content, {
+      if (typeof data.variants[i].image === "string" && data.variants[i].image.startsWith("data:image")) {
+        let variantImageResponse = await cloudinary.uploader.upload(data.variants[i].image, {
           upload_preset: process.env.UPLOAD_PRESET,
         });
         data.variants[i].image = {
           public_id: variantImageResponse.public_id,
           url: variantImageResponse.secure_url,
         };
+      } else {
+        data.variants[i].image = JSON.parse(data.variants[i].image);
       }
     }
   }
-
-  delete data.variant_images;
 
   data = {
     ...data,
@@ -165,9 +132,9 @@ let updateProductById = async (id, data) => {
   const uniqueVariants = [];
   const optionValueSet = new Set();
   for (let i = data.variants.length - 1; i >= 0; i--) {
-    if (!optionValueSet.has(data.variants[i].option_value.toString())) {
+    if (!optionValueSet.has(data.variants[i].option_values.toString())) {
       uniqueVariants.push(data.variants[i]);
-      optionValueSet.add(data.variants[i].option_value.toString());
+      optionValueSet.add(data.variants[i].option_values.toString());
     }
   }
   data.variants = uniqueVariants.reverse();

@@ -14,7 +14,7 @@ router.post(
 router.get("/:id", productController.getByIdProduct);
 router.put(
   "/:id",
-  upload.fields([{ name: 'p_images' }, { name: 'variant_images' }]),
+  upload.none(),
   productController.updateProductById
 );
 router.delete("/:id", productController.deleteByIdProduct);
