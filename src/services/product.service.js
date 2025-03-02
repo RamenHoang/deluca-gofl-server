@@ -62,6 +62,10 @@ let addNewProduct = async (productItem) => {
   }
   productItem.variants = uniqueVariants.reverse();
 
+  if (productItem.p_promotion === "null") {
+    product.p_promotion = 0;
+  }
+
   let newProduct = await productModel.addNewProduct(productItem);
 
   return { message: "SUCCESS", data: newProduct };
@@ -138,6 +142,10 @@ let updateProductById = async (id, data) => {
     }
   }
   data.variants = uniqueVariants.reverse();
+
+  if (data.p_promotion === "null") {
+    data.p_promotion = 0;
+  }
 
   await productModel.updateProductById(id, data);
 

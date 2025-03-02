@@ -138,6 +138,16 @@ let searchBooks = async (req, res) => {
     }
 }
 
+let getDiscountProducts = async (req, res) => {
+    try {
+        let products = await homeService.getDiscountProducts();
+
+        return res.status(200).json(products);
+    } catch (error) {
+        return res.status(500).json(error);
+    }
+}
+
 module.exports = {
     getAllCategories,
     getNewBooks,
@@ -151,5 +161,6 @@ module.exports = {
     getBooksWithPrice,
     getBooksRelated,
     getAllCommentsOfBook,
-    searchBooks
+    searchBooks,
+    getDiscountProducts,
 }
