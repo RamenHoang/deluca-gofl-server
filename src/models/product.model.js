@@ -166,13 +166,12 @@ ProductSchema.statics = {
             .exec();
     },
 
-    getBooksRelated(price, authors, cateId, currentBookId) {
+    getBooksRelated(price, cateId, currentBookId) {
         return this.find({
             $and: [
                 { category: cateId },
                 { $or: [
                     { p_price: price },
-                    { author: { $in: authors } }
                 ]},
                 { _id: { $ne: currentBookId } }
             ]
@@ -184,7 +183,7 @@ ProductSchema.statics = {
                 path: 'option',
                 model: 'Option'
             }
-        }).limit(10).exec();
+        }).limit(4).exec();
     },
 
     //filter price
