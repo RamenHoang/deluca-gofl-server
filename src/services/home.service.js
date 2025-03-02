@@ -101,18 +101,7 @@ let getBooksWithPrice = async (bookId) => {
 
 let getBooksRelated = async (bookId) => {
     let book = await productModel.getByIdProduct(bookId);
-    let authors = [];
-
-    book.author.map(v => {
-        authors = [...authors, v._id];
-    });
-
-    // let data = {
-    //     p_price: book.p_price,
-    //     category: book.category._id
-    // }
-
-    let books = await productModel.getBooksRelated(book.p_price, authors, book.category._id, book._id);
+    let books = await productModel.getBooksRelated(book.p_price, book.category._id, book._id);
 
     return { message: 'SUCCESS', data: books };
 }
