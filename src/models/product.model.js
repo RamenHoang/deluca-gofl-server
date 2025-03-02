@@ -81,7 +81,7 @@ ProductSchema.statics = {
         return this.findOne({ 
             $and: [
                 { _id: { $ne: id } },
-                { p_code: { $regex: new RegExp(code, 'i') } }
+                { p_code: code }
             ]
         }).exec();
     },
@@ -254,6 +254,19 @@ ProductSchema.statics = {
                 { p_description: { $regex: query, $options: 'i' } }
             ]
         })
+            .populate('category')
+            .populate({
+                path: 'variants.option_values',
+                populate: {
+                    path: 'option',
+                    model: 'Option'
+                }
+            })
+            .exec();
+    },
+
+    getDiscountProducts() {
+        return this.find({ p_promotion: { $gt: 0 } })
             .populate('category')
             .populate({
                 path: 'variants.option_values',

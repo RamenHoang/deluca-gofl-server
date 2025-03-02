@@ -16,6 +16,7 @@ router.get('/get-book-with-author/:id', homeController.getBooksWithAuthor);
 router.get('/get-book-with-price/:id', homeController.getBooksWithPrice);
 router.get('/get-books-related/:id', homeController.getBooksRelated);
 router.get('/get-all-comments-of-book/:id', homeController.getAllCommentsOfBook);
+router.get('/get-discount-products', homeController.getDiscountProducts);
 
 router.get('/search-books', homeController.searchBooks);
 module.exports = router;

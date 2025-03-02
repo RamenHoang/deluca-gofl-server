@@ -133,6 +133,12 @@ let searchBooks = async (query) => {
     return { message: 'SUCCESS', data: books };
 }
 
+let getDiscountProducts = async () => {
+    let books = await productModel.getDiscountProducts();
+
+    return { message: 'SUCCESS', data: books };
+}
+
 module.exports = {
     getAllCategories,
     getNewBooks,
@@ -146,6 +152,6 @@ module.exports = {
     getBooksWithPrice,
     getBooksRelated,
     getAllCommentsOfBook,
-
-    searchBooks
+    searchBooks,
+    getDiscountProducts,
 }
