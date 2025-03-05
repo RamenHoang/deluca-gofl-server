@@ -1,4 +1,4 @@
-require("dotenv").config();
+require('dotenv').config();
 
 const express = require("express");
 const bodyParser = require("body-parser");
@@ -32,7 +32,7 @@ const filterRouter = require("./routes/filter.route");
 const app = express();
 
 //Connect database
-ConnectDB("mongodb+srv://anhnguyenhoang321:bYo0LC1EarVkL2Li@deluca.bxrey.mongodb.net/DELUCA?retryWrites=true&w=majority&appName=DELUCA");
+ConnectDB(process.env.DB_URL);
 
 //Config session
 configSession(app);
