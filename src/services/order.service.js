@@ -14,7 +14,7 @@ let addNewOrder = async (data, user) => {
     let productDetail = [...data.products];
     let products = [];
     productDetail.map(v => {
-        products = [...products, { product: v.productInfo._id, quantity: v.quantity, price: v.price }];
+        products = [...products, { product: v.productInfo._id, quantity: v.quantity, price: v.price, variant: v.variant }];
     });
 
     delete data.products;

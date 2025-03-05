@@ -5,7 +5,8 @@ const OrderDetailSchema = mongoose.Schema({
         {
             product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
             quantity: Number,
-            price: Number
+            price: Number,
+            variant: { type: Object, default: null }
         }
     ],
     order: { type: mongoose.Schema.Types.ObjectId, ref: 'Order' },
