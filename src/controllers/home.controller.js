@@ -64,7 +64,22 @@ let getCateById = async (req, res) => {
 let getBooksByCateId = async (req, res) => {
     try {
         let cateId = req.params.id;
-        let books = await homeService.getBooksByCateId(cateId);
+        let minPrice = req.query.minPrice;
+        let maxPrice = req.query.maxPrice;
+        let books = await homeService.getBooksByCateId(cateId, minPrice, maxPrice);
+
+        return res.status(200).json(books);
+    } catch (error) {
+        return res.status(500).json(error);
+    }
+}
+
+let getBooksByCateIds = async (req, res) => {
+    try {
+        let cateIds = req.query.cateIds.split(',').map(id => id.trim());
+        let minPrice = req.query.minPrice;
+        let maxPrice = req.query.maxPrice;
+        let books = await homeService.getBooksByCateIds(cateIds, minPrice, maxPrice);
 
         return res.status(200).json(books);
     } catch (error) {
@@ -163,4 +178,5 @@ module.exports = {
     getAllCommentsOfBook,
     searchBooks,
     getDiscountProducts,
+    getBooksByCateIds,
 }

@@ -3,15 +3,23 @@ const mongoose = require('mongoose');
 const OrderSchema = mongoose.Schema({
     o_code: String,
     o_status: { type: String, default: 'Đặt hàng thành công' }, //Đặt hàng thành công, Tiếp nhận, Đang giao hàng, Đã giao hàng, Đã hủy
-    o_shippingAddress: String,
-    o_phoneReceiver: String,
-    o_nameReceiver: String,
+    o_phone: String,
+    o_email: String,
+    o_firstName: String,
+    o_lastName: String,
+    o_shippingAddress1: String,
+    o_shippingHouseNumber: String,
+    o_shippingAddress2: String,
+    o_shippingCity: String,
+    o_shippingCountry: String,
+    o_shippingState: String,
+    o_shippingPostalcode: String,
     o_payment: { type: String, default: 'pay-cash' },
     o_shippingFee: Number,
     o_totalPrice: Number,
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     createdAt: { type: Date, default: new Date() },
-    updatedAt: Date
+    updatedAt: Date,
 });
 
 OrderSchema.statics = {
