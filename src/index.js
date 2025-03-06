@@ -38,7 +38,18 @@ ConnectDB(process.env.DB_URL);
 configSession(app);
 
 //config cors origin
-app.use(cors());
+const allowedDomains = ['https://topgiaovien.com', 'https://admin.topgiaovien.com'];
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (allowedDomains.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  }
+};
+
+app.use(cors(corsOptions));
 
 //config cookie-parser
 app.use(cookieParser());
