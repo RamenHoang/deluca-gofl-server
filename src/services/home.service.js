@@ -54,8 +54,14 @@ let getCateById = async (id) => {
     return { message: 'SUCCESS', data: cate };
 }
 
-let getBooksByCateId = async (cateId) => {
-    let books = await productModel.getBooksByCateId(cateId);
+let getBooksByCateId = async (cateId, minPrice, maxPrice) => {
+    let books = await productModel.getBooksByCateId(cateId, parseInt(minPrice), parseInt(maxPrice));
+
+    return { message: 'SUCCESS', data: books };
+}
+
+let getBooksByCateIds = async (cateIds, minPrice, maxPrice) => {
+    let books = await productModel.getBooksByCateIds(cateIds, parseInt(minPrice), parseInt(maxPrice));
 
     return { message: 'SUCCESS', data: books };
 }
@@ -143,4 +149,5 @@ module.exports = {
     getAllCommentsOfBook,
     searchBooks,
     getDiscountProducts,
+    getBooksByCateIds,
 }

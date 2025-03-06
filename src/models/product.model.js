@@ -136,8 +136,40 @@ ProductSchema.statics = {
         return this.findByIdAndUpdate(id, data).exec();
     },
 
-    getBooksByCateId(cateId) {
-        return this.find({ category: cateId })
+    getBooksByCateId(cateId, minPrice, maxPrice) {
+        let query = { category: cateId };
+        if (minPrice !== undefined && maxPrice !== undefined) {
+            query.$or = [
+                { p_price: { $gte: minPrice, $lte: maxPrice } },
+                { p_promotion: { $gte: minPrice, $lte: maxPrice } }
+            ];
+        }
+        return this.find(query)
+            .populate('category')
+            .populate({
+                path: 'variants.option_values',
+                populate: {
+                    path: 'option',
+                    model: 'Option'
+                }
+            })
+            .exec();
+    },
+
+    getBooksByCateIds(cateIds, minPrice, maxPrice) {
+        let query = {};
+
+        if (cateIds.length > 0 && cateIds[0] !== '') {
+            query.category = { $in: cateIds };
+        }
+
+        if (minPrice !== undefined && maxPrice !== undefined) {
+            query.$or = [
+                { p_price: { $gte: minPrice, $lte: maxPrice } },
+                { p_promotion: { $gte: minPrice, $lte: maxPrice } }
+            ];
+        }
+        return this.find(query)
             .populate('category')
             .populate({
                 path: 'variants.option_values',
