@@ -3,6 +3,7 @@ const session = require('express-session');
 const MongoStore = require('connect-mongo');
 
 let configSession = (app) => {
+    console.log("DB_URL", process.env.DB_URL);
     app.use(session({
         key: process.env.SESSION_KEY,
         secret: process.env.SESSION_SECRET,
