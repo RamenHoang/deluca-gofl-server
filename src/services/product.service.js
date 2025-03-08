@@ -78,15 +78,15 @@ let deleteByIdProduct = async (productId) => {
     return { message: "PRODUCT_NOT_FOUND" };
   }
 
-  let responseDestroyAvatars = await Promise.all(
-    product.p_images.map(image =>
-      cloudinary.uploader.destroy(image.public_id)
-    )
-  );
+  // let responseDestroyAvatars = await Promise.all(
+  //   product.p_images.map(image =>
+  //     cloudinary.uploader.destroy(image.public_id)
+  //   )
+  // );
 
-  if (responseDestroyAvatars.some(response => !response)) {
-    return { message: "DESTROY_IMAGE_FAILED" };
-  }
+  // if (responseDestroyAvatars.some(response => !response)) {
+  //   return { message: "DESTROY_IMAGE_FAILED" };
+  // }
 
   await productModel.deleteByIdProduct(productId);
 
