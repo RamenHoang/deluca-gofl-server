@@ -75,7 +75,10 @@ let updateCategory = async (id, itemCate) => {
 
     itemCate = {
         ...itemCate,
-        c_slug: slugify(itemCate.c_name)
+    }
+
+    if (itemCate.c_name) {
+        itemCate.c_slug = slugify(itemCate.c_name);
     }
 
     await categoryModel.updateCategory(id, itemCate);

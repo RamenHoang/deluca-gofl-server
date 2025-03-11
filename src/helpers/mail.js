@@ -34,8 +34,8 @@ let sendMailPassword = (to, password) => {
     secure: false,
     service: "Gmail",
     auth: {
-      user: "vuongho098@gmail.com",
-      pass: "0395251176Aa",
+      user: process.env.USER_MAIL,
+      pass: process.env.PASS_MAIL,
     },
   });
 
@@ -59,8 +59,8 @@ let sendMailForgotPassword = (to, password) => {
     secure: false,
     service: "Gmail",
     auth: {
-      user: "vuongho098@gmail.com",
-      pass: "0395251176Aa",
+      user: process.env.USER_MAIL,
+      pass: process.env.PASS_MAIL,
     },
   });
 
