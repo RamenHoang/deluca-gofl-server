@@ -1,3 +1,4 @@
+require("dotenv").config();
 const bcrypt = require("bcrypt");
 const userModel = require("./../models/user.model");
 const JWT = require("./../helpers/jwt");
@@ -202,7 +203,7 @@ let register = async (dataUser, protocol, host) => {
 
   let newUser = await userModel.createNewUser(dataUser);
 
-  let linkVerify = `${protocol}://${host}/api/verify/${newUser.verifyToken}`;
+  let linkVerify = `${process.env.API_URL}/api/verify/${newUser.verifyToken}`;
 
   let send = await sendMail(dataUser.email, linkVerify);
 

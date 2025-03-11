@@ -12,7 +12,7 @@ let getAllCategories = async (req, res) => {
 
 let getNewBooks = async (req, res) => {
     try {
-        let books = await homeService.getNewBooks();
+        let books = await homeService.getNewBooks(req.query.page);
 
         return res.status(200).json(books);
     } catch (error) {
@@ -155,7 +155,7 @@ let searchBooks = async (req, res) => {
 
 let getDiscountProducts = async (req, res) => {
     try {
-        let products = await homeService.getDiscountProducts();
+        let products = await homeService.getDiscountProducts(req.query.page);
 
         return res.status(200).json(products);
     } catch (error) {

@@ -76,7 +76,7 @@ let verifyEmail = async (req, res) => {
     let token = req.params.token;
     let verify = await authService.verifyEmail(token);
 
-    return res.status(200).json(verify);
+    return res.redirect(`${process.env.SHOP_URL}?message=${verify.data}`);
   } catch (error) {
     return res.status(500).json(error);
   }

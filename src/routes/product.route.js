@@ -2,7 +2,9 @@ const express = require("express");
 const multer = require("multer");
 const productController = require("./../controllers/product.controller");
 
-const upload = multer();
+const upload = multer({
+  limits: { fileSize: 1024 * 1024 * 50 },
+});
 const router = express.Router();
 
 router.get("/", productController.getAllProducts);

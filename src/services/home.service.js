@@ -11,8 +11,8 @@ let getAllCategories = async () => {
     return { message: 'SUCCESS', data: categories };
 }
 
-let getNewBooks = async () => {
-    let newbooks = await productModel.getNewBooks();
+let getNewBooks = async (page) => {
+    let newbooks = await productModel.getNewBooks(page);
 
     return { message: 'SUCCESS', data: newbooks };
 }
@@ -128,8 +128,8 @@ let searchBooks = async (query) => {
     return { message: 'SUCCESS', data: books };
 }
 
-let getDiscountProducts = async () => {
-    let books = await productModel.getDiscountProducts();
+let getDiscountProducts = async (page) => {
+    let books = await productModel.getDiscountProducts(page);
 
     return { message: 'SUCCESS', data: books };
 }

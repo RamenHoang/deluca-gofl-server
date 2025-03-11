@@ -4,13 +4,14 @@ const CategorySchema = mongoose.Schema({
     c_name: String,
     c_slug: String,
     c_parent: { type: mongoose.Schema.Types.ObjectId, ref: 'Category' },
+    order: { type: Number, default: 0 },
     c_description: { type: String, default: null },
     createdAt: { type: Date, default: new Date() }
 });
 
 CategorySchema.statics = {
     findByName(c_name) {
-        return this.findOne({ c_name: { $regex: new RegExp(c_name, 'i') } }).exec();
+        return this.findOne({ c_name: c_name }).exec();
     },
 
     addNewCategory(dataCate) {
@@ -21,6 +22,7 @@ CategorySchema.statics = {
         return this.find({})
         .populate('c_parent')
         .sort({
+            order: 1,
             createdAt: -1
         })
         .exec();

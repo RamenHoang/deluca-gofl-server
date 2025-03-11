@@ -102,10 +102,18 @@ ProductSchema.statics = {
         return this.findByIdAndUpdate(id, { p_hot: data }).exec();
     },
 
-    getNewBooks() {
-        return this.find({}).sort({
-            createdAt: -1
-        })
+    getNewBooks(page) {
+        const limit = 8;
+
+        if (page === undefined || page < 1) {
+            page = 1;
+        }
+        const skip = (page - 1) * limit;
+
+        return this.find({})
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit)
             .populate('category')
             .populate({
                 path: 'variants.option_values',
@@ -113,8 +121,7 @@ ProductSchema.statics = {
                     path: 'option',
                     model: 'Option'
                 }
-            })
-            .limit(7).exec();
+            }).exec();
     },
 
     getBooksHot() {
@@ -296,8 +303,18 @@ ProductSchema.statics = {
             .exec();
     },
 
-    getDiscountProducts() {
-        return this.find({ p_promotion: { $gt: 0 } })
+    getDiscountProducts(page) {
+        const limit = 8;
+
+        if (page === undefined || page < 1) {
+            page = 1;
+        }
+
+        const skip = (page - 1) * limit;
+
+        return this.find({ p_promotion: { $gt: 0 }, p_hot: "true" })
+            .skip(skip)
+            .limit(limit)
             .populate('category')
             .populate({
                 path: 'variants.option_values',
