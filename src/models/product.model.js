@@ -24,8 +24,9 @@ const ProductSchema = mongoose.Schema({
         }
     ],
     rating: { type: Number, default: 0 },
-    number_of_rating: { type: Number, default: 0 },
-    createdAt: { type: Date, default: new Date() }
+    number_of_rating: { type: Number, default: 0 }
+}, {
+    timestamps: true
 });
 
 ProductSchema.statics = {
