@@ -1,16 +1,5 @@
 const mongoose = require('mongoose');
 
-const ImageSchema = new mongoose.Schema({
-    public_id: String,
-    url: String
-});
-
-const VariantSchema = new mongoose.Schema({
-    option_values: [{ type: mongoose.Schema.Types.ObjectId, ref: "OptionValue", required: true }], // Tham chiếu đến OptionValue
-    stock: { type: Number, default: 0 },
-    image: { type: ImageSchema, default: null }
-});
-
 const ProductSchema = mongoose.Schema({
     p_name: String,
     p_code: String,
@@ -18,12 +7,22 @@ const ProductSchema = mongoose.Schema({
     p_price: Number,
     p_promotion: Number,
     p_hot: { type: String, default: "false" },
-    p_quantity: Number,
     p_status: { type: String, default: "Còn hàng" },
     p_datepublic: { type: String, default: null },
     p_description: { type: String, default: null },
     category: { type: mongoose.Schema.Types.ObjectId, ref: 'Category' },
-    variants: [VariantSchema],
+    variants: [
+        {
+            color: { type: mongoose.Schema.Types.ObjectId, ref: "Color", required: true },
+            images: [{ type: mongoose.Schema.Types.ObjectId, ref: "Image", required: true }],
+            sizes: [
+                {
+                    size: { type: mongoose.Schema.Types.ObjectId, ref: "Size", required: true },
+                    stock: { type: Number, required: true },
+                }
+            ]
+        }
+    ],
     rating: { type: Number, default: 0 },
     number_of_rating: { type: Number, default: 0 },
     createdAt: { type: Date, default: new Date() }
@@ -34,11 +33,16 @@ ProductSchema.statics = {
         return this.find({})
             .populate('category')
             .populate({
-                path: 'variants.option_values',
-                populate: {
-                    path: 'option',
-                    model: 'Option'
-                }
+                path: 'variants.color',
+                model: 'Color'
+            })
+            .populate({
+                path: 'variants.images',
+                model: 'Image'
+            })
+            .populate({
+                path: 'variants.sizes.size',
+                model: 'Size'
             })
             .sort({ createdAt: -1 }).exec();
     },
@@ -47,11 +51,16 @@ ProductSchema.statics = {
         return this.findById(id)
             .populate('category')
             .populate({
-                path: 'variants.option_values',
-                populate: {
-                    path: 'option',
-                    model: 'Option'
-                }
+                path: 'variants.color',
+                model: 'Color'
+            })
+            .populate({
+                path: 'variants.images',
+                model: 'Image'
+            })
+            .populate({
+                path: 'variants.sizes.size',
+                model: 'Size'
             })
             .exec();
     },
@@ -60,11 +69,16 @@ ProductSchema.statics = {
         return this.find({ '_id': { $in: arr } })
             .populate('category')
             .populate({
-                path: 'variants.option_values',
-                populate: {
-                    path: 'option',
-                    model: 'Option'
-                }
+                path: 'variants.color',
+                model: 'Color'
+            })
+            .populate({
+                path: 'variants.images',
+                model: 'Image'
+            })
+            .populate({
+                path: 'variants.sizes.size',
+                model: 'Size'
             })
             .exec();
     },
@@ -77,8 +91,8 @@ ProductSchema.statics = {
         return this.findOne({ p_code: { $regex: new RegExp(code, 'i') } }).exec();
     },
 
-    getProductByCodeAndCheckExistsCode (id, code) {
-        return this.findOne({ 
+    getProductByCodeAndCheckExistsCode(id, code) {
+        return this.findOne({
             $and: [
                 { _id: { $ne: id } },
                 { p_code: code }
@@ -116,12 +130,18 @@ ProductSchema.statics = {
             .limit(limit)
             .populate('category')
             .populate({
-                path: 'variants.option_values',
-                populate: {
-                    path: 'option',
-                    model: 'Option'
-                }
-            }).exec();
+                path: 'variants.color',
+                model: 'Color'
+            })
+            .populate({
+                path: 'variants.images',
+                model: 'Image'
+            })
+            .populate({
+                path: 'variants.sizes.size',
+                model: 'Size'
+            })
+            .exec();
     },
 
     getBooksHot() {
@@ -130,11 +150,16 @@ ProductSchema.statics = {
         })
             .populate('category')
             .populate({
-                path: 'variants.option_values',
-                populate: {
-                    path: 'option',
-                    model: 'Option'
-                }
+                path: 'variants.color',
+                model: 'Color'
+            })
+            .populate({
+                path: 'variants.images',
+                model: 'Image'
+            })
+            .populate({
+                path: 'variants.sizes.size',
+                model: 'Size'
             })
             .limit(7).exec();
     },
@@ -154,11 +179,16 @@ ProductSchema.statics = {
         return this.find(query)
             .populate('category')
             .populate({
-                path: 'variants.option_values',
-                populate: {
-                    path: 'option',
-                    model: 'Option'
-                }
+                path: 'variants.color',
+                model: 'Color'
+            })
+            .populate({
+                path: 'variants.images',
+                model: 'Image'
+            })
+            .populate({
+                path: 'variants.sizes.size',
+                model: 'Size'
             })
             .exec();
     },
@@ -179,11 +209,16 @@ ProductSchema.statics = {
         return this.find(query)
             .populate('category')
             .populate({
-                path: 'variants.option_values',
-                populate: {
-                    path: 'option',
-                    model: 'Option'
-                }
+                path: 'variants.color',
+                model: 'Color'
+            })
+            .populate({
+                path: 'variants.images',
+                model: 'Image'
+            })
+            .populate({
+                path: 'variants.sizes.size',
+                model: 'Size'
             })
             .exec();
     },
@@ -196,11 +231,16 @@ ProductSchema.statics = {
         return this.find(data)
             .populate('category')
             .populate({
-                path: 'variants.option_values',
-                populate: {
-                    path: 'option',
-                    model: 'Option'
-                }
+                path: 'variants.color',
+                model: 'Color'
+            })
+            .populate({
+                path: 'variants.images',
+                model: 'Image'
+            })
+            .populate({
+                path: 'variants.sizes.size',
+                model: 'Size'
             })
             .exec();
     },
@@ -209,20 +249,27 @@ ProductSchema.statics = {
         return this.find({
             $and: [
                 { category: cateId },
-                { $or: [
-                    { p_price: price },
-                ]},
+                {
+                    $or: [
+                        { p_price: price },
+                    ]
+                },
                 { _id: { $ne: currentBookId } }
             ]
         }).populate('category')
-        .populate('options')
-        .populate({
-            path: 'variants.option_values',
-            populate: {
-                path: 'option',
-                model: 'Option'
-            }
-        }).limit(4).exec();
+            .populate('options')
+            .populate({
+                path: 'variants.color',
+                model: 'Color'
+            })
+            .populate({
+                path: 'variants.images',
+                model: 'Image'
+            })
+            .populate({
+                path: 'variants.sizes.size',
+                model: 'Size'
+            }).limit(4).exec();
     },
 
     //filter price
@@ -235,11 +282,16 @@ ProductSchema.statics = {
         })
             .populate('category')
             .populate({
-                path: 'variants.option_values',
-                populate: {
-                    path: 'option',
-                    model: 'Option'
-                }
+                path: 'variants.color',
+                model: 'Color'
+            })
+            .populate({
+                path: 'variants.images',
+                model: 'Image'
+            })
+            .populate({
+                path: 'variants.sizes.size',
+                model: 'Size'
             })
             .exec();
     },
@@ -254,11 +306,16 @@ ProductSchema.statics = {
         })
             .populate('category')
             .populate({
-                path: 'variants.option_values',
-                populate: {
-                    path: 'option',
-                    model: 'Option'
-                }
+                path: 'variants.color',
+                model: 'Color'
+            })
+            .populate({
+                path: 'variants.images',
+                model: 'Image'
+            })
+            .populate({
+                path: 'variants.sizes.size',
+                model: 'Size'
             })
             .exec();
     },
@@ -272,11 +329,16 @@ ProductSchema.statics = {
         })
             .populate('category')
             .populate({
-                path: 'variants.option_values',
-                populate: {
-                    path: 'option',
-                    model: 'Option'
-                }
+                path: 'variants.color',
+                model: 'Color'
+            })
+            .populate({
+                path: 'variants.images',
+                model: 'Image'
+            })
+            .populate({
+                path: 'variants.sizes.size',
+                model: 'Size'
             })
             .exec();
     },
@@ -294,11 +356,16 @@ ProductSchema.statics = {
         })
             .populate('category')
             .populate({
-                path: 'variants.option_values',
-                populate: {
-                    path: 'option',
-                    model: 'Option'
-                }
+                path: 'variants.color',
+                model: 'Color'
+            })
+            .populate({
+                path: 'variants.images',
+                model: 'Image'
+            })
+            .populate({
+                path: 'variants.sizes.size',
+                model: 'Size'
             })
             .exec();
     },
@@ -317,11 +384,16 @@ ProductSchema.statics = {
             .limit(limit)
             .populate('category')
             .populate({
-                path: 'variants.option_values',
-                populate: {
-                    path: 'option',
-                    model: 'Option'
-                }
+                path: 'variants.color',
+                model: 'Color'
+            })
+            .populate({
+                path: 'variants.images',
+                model: 'Image'
+            })
+            .populate({
+                path: 'variants.sizes.size',
+                model: 'Size'
             })
             .exec();
     }
