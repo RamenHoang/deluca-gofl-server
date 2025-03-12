@@ -7,18 +7,11 @@ const upload = multer({
 });
 const router = express.Router();
 
+router.post('/upload', upload.array('variant_images'), productController.uploadImages);
 router.get("/", productController.getAllProducts);
-router.post(
-  "/",
-  upload.array("variant_images"),
-  productController.addNewProduct
-);
+router.post("/", productController.addNewProduct);
 router.get("/:id", productController.getByIdProduct);
-router.put(
-  "/:id",
-  upload.none(),
-  productController.updateProductById
-);
+router.put("/:id", productController.updateProductById);
 router.delete("/:id", productController.deleteByIdProduct);
 router.put("/change-product-hot/:id", productController.changeProductHotById);
 

@@ -22,6 +22,8 @@ const bannerRouter = require("./routes/banner.route");
 const dashboardRouter = require("./routes/dashboard.route");
 const optionRouter = require('./routes/option.route');
 const optionValueRouter = require('./routes/option_value.route');
+const colorRouter = require('./routes/color.route');
+const sizeRouter = require('./routes/size.route');
 
 //Define router client
 const homeRouter = require("./routes/home.route");
@@ -62,6 +64,8 @@ app.use("/api/banners", authUser.isAdmin, bannerRouter);
 app.use("/api/dashboards", authUser.isAdmin, dashboardRouter);
 app.use("/api/options", authUser.isAdmin, optionRouter);
 app.use("/api/option-values", authUser.isAdmin, optionValueRouter);
+app.use("/api/colors", authUser.isAdmin, colorRouter);
+app.use("/api/sizes", authUser.isAdmin, sizeRouter);
 
 app.use("/api/users", authUser.isLogin, userRouter);
 app.use("/api/comments", commentRouter);
