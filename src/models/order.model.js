@@ -18,8 +18,8 @@ const OrderSchema = mongoose.Schema({
     o_shippingFee: Number,
     o_totalPrice: Number,
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-    createdAt: { type: Date, default: new Date() },
-    updatedAt: Date,
+}, {
+    timestamps: true
 });
 
 OrderSchema.statics = {

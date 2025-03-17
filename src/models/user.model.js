@@ -13,15 +13,16 @@ const UserSchema = mongoose.Schema({
     address: { type: String, default: null },
     phone: { type: String, default: null },
     dateOfBirth: { type: String, default: null },
-    createdAt: { type: Date, default: new Date() }
+}, {
+    timestamps: true
 });
 
 UserSchema.statics = {
-    findUserById (id) {
+    findUserById(id) {
         return this.findById(id, { password: 0, isActive: 0, verifyToken: 0, role: 0 }).exec();
     },
 
-    findUserByIdGetPass (id) {
+    findUserByIdGetPass(id) {
         return this.findById(id).exec();
     },
 
@@ -42,15 +43,15 @@ UserSchema.statics = {
     },
 
     //user
-    getAllUsers () {
+    getAllUsers() {
         return this.find({ role: 'user' }, { password: 0 }).sort({ createdAt: -1 }).exec();
     },
 
     verify(token) {
-        return this.findOneAndUpdate({verifyToken:token }, { isActive: true, verifyToken: null }).exec();
+        return this.findOneAndUpdate({ verifyToken: token }, { isActive: true, verifyToken: null }).exec();
     },
 
-    deleteUser (id) {
+    deleteUser(id) {
         return this.findByIdAndRemove(id).exec();
     },
 
@@ -58,16 +59,16 @@ UserSchema.statics = {
         return this.findByIdAndUpdate(id, data).exec();
     },
 
-    countUserRegister () {
+    countUserRegister() {
         return this.find({ role: 'user' }).countDocuments();
     },
 
     //Staff
-    getAllStaffs () {
+    getAllStaffs() {
         return this.find({
             $or: [
-                {role: 'admin'},
-                {role: 'staff'}
+                { role: 'admin' },
+                { role: 'staff' }
             ]
         }, { password: 0 }).sort({ createdAt: -1 }).exec();
     }

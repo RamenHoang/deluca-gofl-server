@@ -20,7 +20,8 @@ const OrderDetailSchema = mongoose.Schema({
         }
     ],
     order: { type: mongoose.Schema.Types.ObjectId, ref: 'Order' },
-    createdAt: { type: Date, default: new Date() }
+}, {
+    timestamps: true
 });
 
 OrderDetailSchema.statics = {

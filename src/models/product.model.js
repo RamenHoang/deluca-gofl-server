@@ -24,7 +24,8 @@ const ProductSchema = mongoose.Schema({
         }
     ],
     rating: { type: Number, default: 0 },
-    number_of_rating: { type: Number, default: 0 }
+    number_of_rating: { type: Number, default: 0 },
+    sizeChart: { type: mongoose.Schema.Types.ObjectId, ref: "Image", required: true }
 }, {
     timestamps: true
 });
@@ -63,6 +64,7 @@ ProductSchema.statics = {
                 path: 'variants.sizes.size',
                 model: 'Size'
             })
+            .populate('sizeChart')
             .exec();
     },
 
