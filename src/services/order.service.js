@@ -1,5 +1,6 @@
 const orderModel = require('./../models/order.model');
 const orderDetailModel = require('./../models/order_detail.model');
+const productModel = require('./../models/product.model'); // Add this line
 const calculateShippingFee = require('./../utils/calculateShippingFee');
 const randomString = require('randomstring');
 
@@ -37,6 +38,22 @@ let addNewOrder = async (data, user) => {
     }
 
     await orderDetailModel.addNewOrderDetail(orderDetail);
+
+    // Update stock of the exact size in the variant
+    for (let product of products) {
+        await productModel.updateOne(
+            {
+                _id: product.product
+            },
+            { $inc: { "variants.$[variant].sizes.$[size].stock": -product.quantity } },
+            {
+                arrayFilters: [
+                    { "variant.color": product.variant.color._id },
+                    { "size.size": product.size }
+                ]
+            }
+        );
+    }
 
     return { message: 'SUCCESS' };
 }
