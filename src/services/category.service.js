@@ -11,9 +11,9 @@ let addNewCategory = async (dataCategory) => {
     let category = await categoryModel.findByName(dataCategory.c_name);
 
     if (category) {
-       return { message: 'CATEGORY_EXISTS' };
+        return { message: 'CATEGORY_EXISTS' };
     }
-    
+
     if (dataCategory.c_parent === '') {
         delete dataCategory.c_parent;
     }
@@ -22,9 +22,9 @@ let addNewCategory = async (dataCategory) => {
         ...dataCategory,
         c_slug: slugify(dataCategory.c_name)
     }
-    
+
     let addNewCate = await categoryModel.addNewCategory(dataCategory);
-   
+
 
     return { message: 'SUCCESS', data: addNewCate };
 }
@@ -46,7 +46,7 @@ let getByIdCategory = async (id) => {
     let cate = await categoryModel.getByIdCategory(id);
 
     if (!cate) {
-        return { message:'CATEGORY_NOT_FOUND' };
+        return { message: 'CATEGORY_NOT_FOUND' };
     }
 
     return { message: 'SUCCESS', data: cate };
@@ -99,7 +99,7 @@ let deleteByIdCategory = async (id) => {
     }
 
     let childCate = await categoryModel.countCateChildByParentId(id);
-    
+
     if (childCate > 0) {
         return { message: 'PARENT_EXISTS' };
     }
@@ -111,7 +111,7 @@ let deleteByIdCategory = async (id) => {
     }
 
     await categoryModel.deleteByIdCategory(id);
-       
+
     return { message: 'SUCCESS' };
 }
 

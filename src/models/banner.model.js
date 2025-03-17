@@ -3,7 +3,8 @@ const mongoose = require('mongoose');
 const BannerSchema = mongoose.Schema({
     b_name: String,
     b_image: { public_id: String, url: String },
-    createdAt: { type: Date, default: new Date() }
+}, {
+    timestamps: true
 });
 
 BannerSchema.statics = {
@@ -15,19 +16,19 @@ BannerSchema.statics = {
         return this.create(data);
     },
 
-    findBannerById (id) {
+    findBannerById(id) {
         return this.findById(id).exec();
     },
 
-    deleteBannerById (id) {
+    deleteBannerById(id) {
         return this.findByIdAndRemove(id).exec();
     },
 
-    updateBannerById (id, data) {
+    updateBannerById(id, data) {
         return this.findByIdAndUpdate(id, data).exec();
     },
 
-    getBanners () {
+    getBanners() {
         return this.find({}).sort({ createdAt: -1 }).limit(5).exec();
     }
 }
