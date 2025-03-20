@@ -205,7 +205,7 @@ let register = async (dataUser, protocol, host) => {
 
   let linkVerify = `${process.env.API_URL}/api/verify/${newUser.verifyToken}`;
 
-  let send = await sendMail(dataUser.email, linkVerify);
+  let send = await sendMail(dataUser.email, linkVerify, newUser);
 
   if (!send) {
     await userModel.deleteUser(newUser._id);
