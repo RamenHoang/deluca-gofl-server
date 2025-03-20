@@ -19,7 +19,7 @@ const UserSchema = mongoose.Schema({
 
 UserSchema.statics = {
     findUserById(id) {
-        return this.findById(id, { password: 0, isActive: 0, verifyToken: 0, role: 0 }).exec();
+        return this.findById(id, { password: 0, isActive: 0, verifyToken: 0 }).exec();
     },
 
     findUserByIdGetPass(id) {
