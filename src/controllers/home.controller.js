@@ -1,3 +1,4 @@
+const paymentModel = require('../models/payment.model');
 const homeService = require('./../services/home.service');
 
 let getAllCategories = async (req, res) => {
@@ -163,6 +164,16 @@ let getDiscountProducts = async (req, res) => {
     }
 }
 
+let getPaymentInfo = async (req, res) => {
+    try {
+        let payment = await paymentModel.find({}).populate("qrCode");
+
+        return res.status(200).json(payment ? payment[0] : null);
+    } catch (error) {
+        return res.status(500).json(error);
+    }
+}
+
 module.exports = {
     getAllCategories,
     getNewBooks,
@@ -179,4 +190,5 @@ module.exports = {
     searchBooks,
     getDiscountProducts,
     getBooksByCateIds,
+    getPaymentInfo,
 }

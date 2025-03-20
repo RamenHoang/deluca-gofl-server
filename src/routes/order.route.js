@@ -15,6 +15,6 @@ router.get('/destroy-order/:id', authUser.isLogin, orderController.destroyOrder)
 router.get('/get-all-order', authUser.isAdmin, orderController.getAllOrders);
 router.get('/get-order-detail-by-order/:id', authUser.isAdmin, orderController.getOrderDetailByOrder);
 router.put('/change-status-order/:id', authUser.isAdmin, orderController.changeStatusOrder);
-router.get('/filter-by-status', authUser.isAdmin, orderController.filterByStatus);
+router.get('/filter', authUser.isAdmin, orderController.filter);
 
 module.exports = router;
