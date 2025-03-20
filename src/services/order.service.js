@@ -55,7 +55,7 @@ let addNewOrder = async (data, user) => {
         );
     }
 
-    return { message: 'SUCCESS' };
+    return { message: 'SUCCESS', data: order };
 }
 
 let getOrderByUserId = async (userId) => {
@@ -109,12 +109,13 @@ let changeStatusOrder = async (id, data) => {
     return { message: 'SUCCESS' };
 }
 
-let filterByStatus = async (status) => {
-    if (status === '') {
+let filter = async (status, payment) => {
+    if (status === '' && payment === '') {
         let orders = await orderModel.getAllOrders();
         return { message: 'SUCCESS', data: orders };
     }
-    let order = await orderModel.getOrderByStatus(status);
+
+    let order = await orderModel.getOrderByStatusAndPayment(status, payment);
     return { message: 'SUCCESS', data: order };
 }
 
@@ -130,5 +131,5 @@ module.exports = {
     getAllOrders,
     getOrderDetailByOrder,
     changeStatusOrder,
-    filterByStatus
+    filter
 }

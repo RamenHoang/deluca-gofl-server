@@ -43,8 +43,17 @@ OrderSchema.statics = {
         return this.find({}).sort({ createdAt: -1 }).exec();
     },
 
-    getOrderByStatus(status) {
-        return this.find({ o_status: status }).exec();
+    getOrderByStatusAndPayment(status, payment) {
+        if (!status && !payment) {
+            return this.find({}).sort({ createdAt: -1 }).exec();
+        }
+        if (!status && payment) {
+            return this.find({ o_payment: payment }).sort({ createdAt: -1 }).exec();
+        }
+        if (status && !payment) {
+            return this.find({ o_status: status }).sort({ createdAt: -1 }).exec();
+        }
+        return this.find({ o_status: status, o_payment: payment }).sort({ createdAt: -1 }).exec();
     },
 
     changeStatusOrder(id, o_status) {

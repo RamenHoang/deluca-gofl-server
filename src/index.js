@@ -24,6 +24,7 @@ const optionRouter = require('./routes/option.route');
 const optionValueRouter = require('./routes/option_value.route');
 const colorRouter = require('./routes/color.route');
 const sizeRouter = require('./routes/size.route');
+const paymentRouter = require('./routes/payment.route');
 
 //Define router client
 const homeRouter = require("./routes/home.route");
@@ -66,15 +67,16 @@ app.use("/api/options", authUser.isAdmin, optionRouter);
 app.use("/api/option-values", authUser.isAdmin, optionValueRouter);
 app.use("/api/colors", authUser.isAdmin, colorRouter);
 app.use("/api/sizes", authUser.isAdmin, sizeRouter);
-
+app.use("/api/payments", authUser.isAdmin, paymentRouter);
 app.use("/api/users", authUser.isLogin, userRouter);
-app.use("/api/comments", commentRouter);
 
 //Router api client
 app.use("/api/home", homeRouter);
 app.use("/api/filters", filterRouter);
 app.use("/api/carts", authUser.isLogin, cartRouter);
 app.use("/api/orders", orderRouter);
+app.use("/api/comments", commentRouter);
+
 
 //Listen port
 app.listen(process.env.APP_PORT, () => {

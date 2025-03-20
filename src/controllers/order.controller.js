@@ -90,10 +90,10 @@ let changeStatusOrder = async (req, res) => {
     }
 }
 
-let filterByStatus = async (req, res) => {
+let filter = async (req, res) => {
     try {
-        let query = req.query.status;
-        let data = await orderService.filterByStatus(query);
+        let query = req.query;
+        let data = await orderService.filter(query.status, query.payment);
 
         return res.status(200).json(data);
     } catch (error) {
@@ -113,5 +113,5 @@ module.exports = {
     getAllOrders,
     getOrderDetailByOrder,
     changeStatusOrder,
-    filterByStatus
+    filter
 }
