@@ -31,6 +31,7 @@ const homeRouter = require("./routes/home.route");
 const cartRouter = require("./routes/cart.route");
 const orderRouter = require("./routes/order.route");
 const filterRouter = require("./routes/filter.route");
+const contactRouter = require("./routes/contact.route");
 
 const app = express();
 
@@ -76,6 +77,7 @@ app.use("/api/filters", filterRouter);
 app.use("/api/carts", authUser.isLogin, cartRouter);
 app.use("/api/orders", orderRouter);
 app.use("/api/comments", commentRouter);
+app.use("/api/contact", contactRouter);
 
 
 //Listen port
