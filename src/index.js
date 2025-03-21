@@ -25,6 +25,7 @@ const optionValueRouter = require('./routes/option_value.route');
 const colorRouter = require('./routes/color.route');
 const sizeRouter = require('./routes/size.route');
 const paymentRouter = require('./routes/payment.route');
+const postRouter = require('./routes/post.route');
 
 //Define router client
 const homeRouter = require("./routes/home.route");
@@ -70,6 +71,7 @@ app.use("/api/colors", authUser.isAdmin, colorRouter);
 app.use("/api/sizes", authUser.isAdmin, sizeRouter);
 app.use("/api/payments", authUser.isAdmin, paymentRouter);
 app.use("/api/users", authUser.isLogin, userRouter);
+app.use("/api/posts", postRouter);
 
 //Router api client
 app.use("/api/home", homeRouter);
