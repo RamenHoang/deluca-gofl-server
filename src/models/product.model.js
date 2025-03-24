@@ -197,7 +197,7 @@ ProductSchema.statics = {
     },
 
     getBooksByCateIds(cateIds, minPrice, maxPrice, page, limit) {
-        if (limit === undefined || limit < ) {
+        if (limit === undefined || limit < 1) {
             limit = 6;
         }
 
