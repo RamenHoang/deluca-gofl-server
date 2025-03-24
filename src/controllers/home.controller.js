@@ -97,7 +97,9 @@ let getBooksByCateIds = async (req, res) => {
         let cateIds = req.query.cateIds.split(',').map(id => id.trim());
         let minPrice = req.query.minPrice;
         let maxPrice = req.query.maxPrice;
-        let books = await homeService.getBooksByCateIds(cateIds, minPrice, maxPrice);
+        let page = req.query.page ? req.query.page : 1;
+        let limit = req.query.limit ? req.query.limit : 6;
+        let books = await homeService.getBooksByCateIds(cateIds, minPrice, maxPrice, page, limit);
 
         return res.status(200).json(books);
     } catch (error) {

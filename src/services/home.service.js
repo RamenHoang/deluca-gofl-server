@@ -60,8 +60,8 @@ let getBooksByCateId = async (cateId, minPrice, maxPrice) => {
     return { message: 'SUCCESS', data: books };
 }
 
-let getBooksByCateIds = async (cateIds, minPrice, maxPrice) => {
-    let books = await productModel.getBooksByCateIds(cateIds, parseInt(minPrice), parseInt(maxPrice));
+let getBooksByCateIds = async (cateIds, minPrice, maxPrice, page, limit) => {
+    let books = await productModel.getBooksByCateIds(cateIds, parseInt(minPrice), parseInt(maxPrice), parseInt(page), parseInt(limit));
 
     return { message: 'SUCCESS', data: books };
 }
