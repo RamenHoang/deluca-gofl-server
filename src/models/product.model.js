@@ -196,7 +196,16 @@ ProductSchema.statics = {
             .exec();
     },
 
-    getBooksByCateIds(cateIds, minPrice, maxPrice) {
+    getBooksByCateIds(cateIds, minPrice, maxPrice, page, limit) {
+        if (limit === undefined || limit < ) {
+            limit = 6;
+        }
+
+        if (page === undefined || page < 1) {
+            page = 1;
+        }
+        const skip = (page - 1) * limit;
+
         let query = {};
 
         if (cateIds.length > 0 && cateIds[0] !== '') {
@@ -223,6 +232,9 @@ ProductSchema.statics = {
                 path: 'variants.sizes.size',
                 model: 'Size'
             })
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit)
             .exec();
     },
 
