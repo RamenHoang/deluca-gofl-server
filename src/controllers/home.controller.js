@@ -14,13 +14,26 @@ let getAllCategories = async (req, res) => {
 
 let getSubCategories = async (req, res) => {
     try {
-        let categories = await categoryModel.find({ c_parent: req.params.id })
-            .populate('c_parent')
+        let categories = [];
+        let category = await categoryModel.find({ _id: req.params.id }).exec();
+        let subCategories = await categoryModel.find({ c_parent: req.params.id })
             .sort({
                 order: 1,
                 createdAt: -1
             })
             .exec();
+
+        categories.push(category[0]);
+
+        if (subCategories.length > 0) {
+            categories.push(...subCategories);
+        } else {
+            let siblingCategories = await categoryModel.find({ c_parent: category[0].c_parent, _id: { $ne: req.params.id } }).exec();
+            let parentCategory = await categoryModel.find({ _id: category[0].c_parent }).exec();
+            categories.push(...siblingCategories, ...parentCategory);
+        }
+
+        categories = categories.sort((a, b) => a.createdAt - b.createdAt);
 
         return res.status(200).json({ message: 'SUCCESS', data: categories });
     } catch (error) {
@@ -72,6 +85,14 @@ let getCateById = async (req, res) => {
     try {
         let id = req.params.id;
         let category = await homeService.getCateById(id);
+        
+        let relatedCategories = await categoryModel.find({ c_parent: category.data._id }).exec();
+
+        if (relatedCategories.length > 0) {
+            category.data._doc.is_parent = true;
+        } else {
+            category.data._doc.is_parent = false;
+        }
 
         return res.status(200).json(category);
     } catch (error) {
