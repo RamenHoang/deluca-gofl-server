@@ -1,11 +1,28 @@
 const paymentModel = require('../models/payment.model');
 const homeService = require('./../services/home.service');
+const categoryModel = require('./../models/category.model');
 
 let getAllCategories = async (req, res) => {
     try {
         let categories = await homeService.getAllCategories();
 
         return res.status(200).json(categories);
+    } catch (error) {
+        return res.status(500).json(error);
+    }
+}
+
+let getSubCategories = async (req, res) => {
+    try {
+        let categories = await categoryModel.find({ c_parent: req.params.id })
+            .populate('c_parent')
+            .sort({
+                order: 1,
+                createdAt: -1
+            })
+            .exec();
+
+        return res.status(200).json({ message: 'SUCCESS', data: categories });
     } catch (error) {
         return res.status(500).json(error);
     }
@@ -103,7 +120,7 @@ let getBooksWithAuthor = async (req, res) => {
     try {
         let bookId = req.params.id;
         let books = await homeService.getBooksWithAuthor(bookId);
-        
+
         return res.status(200).json(books);
     } catch (error) {
         return res.status(500).json(error);
@@ -121,7 +138,7 @@ let getBooksWithPrice = async (req, res) => {
     }
 }
 
-let getBooksRelated = async (req,res) => {
+let getBooksRelated = async (req, res) => {
     try {
         let bookId = req.params.id;
         let books = await homeService.getBooksRelated(bookId);
@@ -191,4 +208,5 @@ module.exports = {
     getDiscountProducts,
     getBooksByCateIds,
     getPaymentInfo,
+    getSubCategories,
 }

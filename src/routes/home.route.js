@@ -3,6 +3,7 @@ const router = express.Router();
 const homeController = require('./../controllers/home.controller');
 
 router.get('/all-categories', homeController.getAllCategories);
+router.get('/sub-categories/:id', homeController.getSubCategories);
 
 router.get('/new-books', homeController.getNewBooks);
 router.get('/books-hot', homeController.getBooksHot);
