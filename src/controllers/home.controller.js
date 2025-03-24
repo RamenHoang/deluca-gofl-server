@@ -16,21 +16,18 @@ let getSubCategories = async (req, res) => {
     try {
         let categories = [];
         let category = await categoryModel.find({ _id: req.params.id }).exec();
-        let subCategories = await categoryModel.find({ c_parent: req.params.id })
-            .sort({
-                order: 1,
-                createdAt: -1
-            })
-            .exec();
+        let subCategories = await categoryModel.find({ c_parent: req.params.id }).exec();
 
         categories.push(category[0]);
 
         if (subCategories.length > 0) {
             categories.push(...subCategories);
         } else {
-            let siblingCategories = await categoryModel.find({ c_parent: category[0].c_parent, _id: { $ne: req.params.id } }).exec();
-            let parentCategory = await categoryModel.find({ _id: category[0].c_parent }).exec();
-            categories.push(...siblingCategories, ...parentCategory);
+            if (category[0].c_parent) {
+                let siblingCategories = await categoryModel.find({ c_parent: category[0].c_parent, _id: { $ne: req.params.id } }).exec();
+                let parentCategory = await categoryModel.find({ _id: category[0].c_parent }).exec();
+                categories.push(...siblingCategories, ...parentCategory);
+            }
         }
 
         categories = categories.sort((a, b) => a.createdAt - b.createdAt);
