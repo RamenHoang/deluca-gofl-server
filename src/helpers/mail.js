@@ -1,7 +1,7 @@
 const dotenv = require("dotenv");
 dotenv.config();
-
 const nodemailer = require("nodemailer");
+const UserModel = require("../models/user.model");
 
 let sendMail = (to, linkVerify, user) => {
   let transporter = nodemailer.createTransport({
@@ -108,9 +108,60 @@ let sendMailContact = (to, data) => {
   return transporter.sendMail(mailOptions);
 };
 
+let sendMailOrder = (order, orderDetail) => {
+  let transporter = nodemailer.createTransport({
+    host: "smtp.ethereal.email",
+    port: 587,
+    secure: false,
+    service: "Gmail",
+    auth: {
+      user: process.env.USER_MAIL,
+      pass: process.env.PASS_MAIL,
+    },
+  });
+
+  let address = [
+    order.o_shippingHouseNumber,
+    order.o_shippingAddress1,
+    order.o_shippingAddress2 || '',
+    order.o_shippingCity,
+    order.o_shippingCountry,
+  ].filter(Boolean).join(', ');
+  let mailOptions = {
+    from: 'DeLuca Golf Shop',
+    to: process.env.ADMIN_MAIL || process.env.USER_MAIL,
+    subject: `📢 Thông báo: Đơn hàng mới #${order.o_code}`,
+    html: `
+      <h2>Đơn hàng mới từ khách hàng</h2>
+      <p><strong>Mã đơn hàng:</strong> ${order.o_code}</p>
+      <p><strong>Người nhận:</strong> ${order.o_firstName} ${order.o_lastName}</p>
+      <p><strong>Số điện thoại:</strong> ${order.o_phone}</p>
+      <p><strong>Email:</strong> ${order.o_email}</p>
+      <p><strong>Địa chỉ:</strong> ${address}</p>
+      <p><strong>Phương thức thanh toán:</strong> ${order.o_payment === 'pay-cash' ? 'Thanh toán khi nhận hàng' : 'Thanh toán QR Code'}</p>
+      <p><strong>Tổng tiền:</strong> ${order.o_totalPrice.toLocaleString('vi-VN')} đ</p>
+      <p><strong>Trạng thái đơn hàng:</strong> ${order.o_status}</p>
+      <p><strong>Thời gian đặt hàng:</strong> ${new Date(order.createdAt).toLocaleString('vi-VN')}</p>
+      <hr>
+      <p>Vui lòng kiểm tra hệ thống để xử lý đơn hàng sớm nhất.</p>
+    `,
+  };
+
+  UserModel.find({ role: 'admin' })
+  .then((admins) => {
+    admins.forEach(admin => {
+      mailOptions.to = admin.email;
+      transporter.sendMail(mailOptions);
+    });
+  });
+
+  return transporter.sendMail(mailOptions);
+};
+
 module.exports = {
   sendMail,
   sendMailPassword,
   sendMailForgotPassword,
-  sendMailContact
+  sendMailContact,
+  sendMailOrder
 };
