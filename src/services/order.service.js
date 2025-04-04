@@ -3,6 +3,7 @@ const orderDetailModel = require('./../models/order_detail.model');
 const productModel = require('./../models/product.model'); // Add this line
 const calculateShippingFee = require('./../utils/calculateShippingFee');
 const randomString = require('randomstring');
+const sendMailOrder = require('./../helpers/mail').sendMailOrder;
 
 //Customer
 let shippingFee = (method) => {
@@ -54,6 +55,8 @@ let addNewOrder = async (data, user) => {
             }
         );
     }
+
+    sendMailOrder(order, orderDetail);
 
     return { message: 'SUCCESS', data: order };
 }
