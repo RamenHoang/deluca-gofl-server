@@ -1,4 +1,6 @@
+const { captureRejectionSymbol } = require('events');
 const mongoose = require('mongoose');
+const categoryModel = require('./category.model');
 
 const ProductSchema = mongoose.Schema({
     p_name: String,
@@ -196,7 +198,13 @@ ProductSchema.statics = {
             .exec();
     },
 
-    getBooksByCateIds(cateIds, minPrice, maxPrice, page, limit) {
+    async getBooksByCateIds(cateIds, minPrice, maxPrice, page, limit) {
+        const category = await categoryModel.find({ _id: { $in: cateIds } }).exec();
+
+        // Check if any category has isDiscount set to true
+        const hasDiscount = category.some(cate => cate.isDiscount === true);
+
+
         if (limit === undefined || limit < 1) {
             limit = 6;
         }
@@ -208,16 +216,23 @@ ProductSchema.statics = {
 
         let query = {};
 
-        if (cateIds.length > 0 && cateIds[0] !== '') {
-            query.category = { $in: cateIds };
+        if (hasDiscount) {
+            query.p_promotion = { $ne: null, $gt: 0 };
+
+            if (minPrice !== undefined && maxPrice !== undefined) {
+                query.p_promotion.$gte = minPrice;
+                query.p_promotion.$lte = maxPrice;
+            }
+        } else {
+            if (cateIds.length > 0 && cateIds[0] !== '') {
+                query.category = { $in: cateIds };
+            }
+            if (minPrice !== undefined && maxPrice !== undefined) {
+                query.p_price = { $gte: minPrice, $lte: maxPrice };
+                query.p_promotion = { $gte: minPrice, $lte: maxPrice };
+            }
         }
 
-        if (minPrice !== undefined && maxPrice !== undefined) {
-            query.$or = [
-                { p_price: { $gte: minPrice, $lte: maxPrice } },
-                { p_promotion: { $gte: minPrice, $lte: maxPrice } }
-            ];
-        }
         return this.find(query)
             .populate('category')
             .populate({

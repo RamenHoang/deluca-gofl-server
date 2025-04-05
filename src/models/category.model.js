@@ -6,6 +6,7 @@ const CategorySchema = mongoose.Schema({
     c_parent: { type: mongoose.Schema.Types.ObjectId, ref: 'Category' },
     order: { type: Number, default: 0 },
     c_description: { type: String, default: null },
+    isDiscount: { type: Boolean, default: false },
     createdAt: { type: Date, default: new Date() }
 });
 
