@@ -12,7 +12,7 @@ const ProductSchema = mongoose.Schema({
     p_status: { type: String, default: "Còn hàng" },
     p_datepublic: { type: String, default: null },
     p_description: { type: String, default: null },
-    category: { type: mongoose.Schema.Types.ObjectId, ref: 'Category' },
+    category: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Category' }],
     variants: [
         {
             color: { type: mongoose.Schema.Types.ObjectId, ref: "Color", required: true },
@@ -426,8 +426,38 @@ ProductSchema.statics = {
                 model: 'Size'
             })
             .exec();
-    }
+    },
 
+    migrateToMultipleCategories() {
+        // Find all products where category exists but is not an array
+        return this.aggregate([
+            {
+                $match: {
+                    category: { $exists: true },
+                    $expr: { $not: { $isArray: "$category" } }
+                }
+            }
+        ]).then(products => {
+            if (products.length === 0) {
+                return { message: "No products found that need migration", migratedCount: 0 };
+            }
+            
+            const updatePromises = products.map(product => {
+                return this.updateOne(
+                    { _id: product._id },
+                    { $set: { category: [product.category] } }
+                );
+            });
+            
+            return Promise.all(updatePromises).then(() => {
+                return { 
+                    message: "Migration completed successfully", 
+                    migratedCount: products.length,
+                    migratedProducts: products.map(p => p._id)
+                };
+            });
+        });
+    }
 }
 
 module.exports = mongoose.model('Product', ProductSchema, 'product');
