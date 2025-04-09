@@ -1,5 +1,5 @@
-const { captureRejectionSymbol } = require('events');
 const mongoose = require('mongoose');
+const ObjectId = mongoose.Types.ObjectId;
 const categoryModel = require('./category.model');
 
 const ProductSchema = mongoose.Schema({
@@ -200,6 +200,7 @@ ProductSchema.statics = {
 
     async getBooksByCateIds(cateIds, minPrice, maxPrice, page, limit) {
         const category = await categoryModel.find({ _id: { $in: cateIds } }).exec();
+        cateIds = category.map(cate => ObjectId(cate._id));
 
         // Check if any category has isDiscount set to true
         const hasDiscount = category.some(cate => cate.isDiscount === true);
@@ -228,8 +229,10 @@ ProductSchema.statics = {
                 query.category = { $in: cateIds };
             }
             if (minPrice !== undefined && maxPrice !== undefined) {
-                query.p_price = { $gte: minPrice, $lte: maxPrice };
-                query.p_promotion = { $gte: minPrice, $lte: maxPrice };
+                query.$or = [
+                    { p_price: { $gte: minPrice, $lte: maxPrice } },
+                    { p_promotion: { $gte: minPrice, $lte: maxPrice } }
+                ];
             }
         }
 
