@@ -219,6 +219,16 @@ ProductSchema.statics = {
 
         if (hasDiscount) {
             query.p_promotion = { $ne: null, $gt: 0 };
+            query.$expr = {
+                $lt: [
+                  { $cond: [
+                    { $eq: ["$p_price", 0] }, 
+                    0, 
+                    { $divide: ["$p_promotion", "$p_price"] }
+                  ]},
+                  0.5
+                ]
+              }
 
             if (minPrice !== undefined && maxPrice !== undefined) {
                 query.p_promotion.$gte = minPrice;
