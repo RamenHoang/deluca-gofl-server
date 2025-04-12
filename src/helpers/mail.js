@@ -129,7 +129,7 @@ let sendMailOrder = async (order, orderDetail) => {
     const productDetails = await ProductModel.findById(product.product);
     const sizeDetails = await SizeModel.findById(product.size);
 
-    products.push(`${productDetails.p_name} - ${sizeDetails.name}`);
+    products.push(`${productDetails.p_name} - ${sizeDetails.name} x ${product.quantity}`);
   }
 
   let address = [
