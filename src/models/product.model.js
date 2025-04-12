@@ -121,7 +121,7 @@ ProductSchema.statics = {
         return this.findByIdAndUpdate(id, { p_hot: data }).exec();
     },
 
-    getNewBooks(page) {
+    async getNewBooks(page) {
         const limit = 8;
 
         if (page === undefined || page < 1) {
@@ -129,7 +129,9 @@ ProductSchema.statics = {
         }
         const skip = (page - 1) * limit;
 
-        return this.find({})
+        const totalCount = await this.countDocuments({}).exec();
+
+        const result = await this.find({})
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit)
@@ -147,6 +149,11 @@ ProductSchema.statics = {
                 model: 'Size'
             })
             .exec();
+        
+        return {
+            result,
+            totalCount: Math.ceil(totalCount / limit),
+        };
     },
 
     getBooksHot() {
@@ -245,8 +252,9 @@ ProductSchema.statics = {
                 ];
             }
         }
-
-        return this.find(query)
+        // Count total products matching the query (without skip & limit)
+        const totalCount = await this.countDocuments(query).exec();
+        const result = await this.find(query)
             .populate('category')
             .populate({
                 path: 'variants.color',
@@ -264,6 +272,12 @@ ProductSchema.statics = {
             .skip(skip)
             .limit(limit)
             .exec();
+
+
+        return {
+            result,
+            totalCount: Math.ceil(totalCount / limit),
+        };
     },
 
     getBooksWithAuthor(authors) {
@@ -413,7 +427,7 @@ ProductSchema.statics = {
             .exec();
     },
 
-    getDiscountProducts(page) {
+    async getDiscountProducts(page) {
         const limit = 8;
 
         if (page === undefined || page < 1) {
@@ -421,8 +435,8 @@ ProductSchema.statics = {
         }
 
         const skip = (page - 1) * limit;
-
-        return this.find({ p_promotion: { $gt: 0 }, p_hot: "true" })
+        const totalCount = await this.countDocuments({ p_promotion: { $gt: 0 }, p_hot: "true" }).exec();
+        const result = await this.find({ p_promotion: { $gt: 0 }, p_hot: "true" })
             .skip(skip)
             .limit(limit)
             .populate('category')
@@ -439,6 +453,11 @@ ProductSchema.statics = {
                 model: 'Size'
             })
             .exec();
+        
+        return {
+            result,
+            totalCount: Math.ceil(totalCount / limit),
+        };
     },
 
     migrateToMultipleCategories() {

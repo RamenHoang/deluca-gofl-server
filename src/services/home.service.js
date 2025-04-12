@@ -14,7 +14,7 @@ let getAllCategories = async () => {
 let getNewBooks = async (page) => {
     let newbooks = await productModel.getNewBooks(page);
 
-    return { message: 'SUCCESS', data: newbooks };
+    return { message: 'SUCCESS', data: newbooks.result, total: newbooks.totalCount };
 }
 
 let getBooksHot = async () => {
@@ -63,7 +63,7 @@ let getBooksByCateId = async (cateId, minPrice, maxPrice) => {
 let getBooksByCateIds = async (cateIds, minPrice, maxPrice, page, limit) => {
     let books = await productModel.getBooksByCateIds(cateIds, parseInt(minPrice), parseInt(maxPrice), parseInt(page), parseInt(limit));
 
-    return { message: 'SUCCESS', data: books };
+    return { message: 'SUCCESS', data: books.result, total: books.totalCount };
 }
 
 let getBookById = async (id) => {
@@ -131,7 +131,7 @@ let searchBooks = async (query) => {
 let getDiscountProducts = async (page) => {
     let books = await productModel.getDiscountProducts(page);
 
-    return { message: 'SUCCESS', data: books };
+    return { message: 'SUCCESS', data: books.result, total: books.totalCount };
 }
 
 module.exports = {
