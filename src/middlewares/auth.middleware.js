@@ -52,7 +52,33 @@ let isLogin = async (req, res, next) => {
   }
 };
 
+let attachUser = async (req, res, next) => {
+  let tokenFromClient = req.body.token || req.headers["authorization"];
+
+  if (tokenFromClient) {
+    try {
+      //Verify token
+      let decoded = await JWT.verifyToken(tokenFromClient);
+
+      //Get user from token
+      let user = await userModel.findUserById(decoded.data);
+
+      req.user = user;
+      req.token = tokenFromClient;
+    } catch (error) {
+      req.user = null;
+      req.token = null;
+    }
+  } else {
+    req.user = null;
+    req.token = null;
+  }
+
+  next();
+};
+
 module.exports = {
   isAdmin,
   isLogin,
+  attachUser,
 };

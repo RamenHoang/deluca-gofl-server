@@ -6,7 +6,7 @@ const authUser = require('./../middlewares/auth.middleware');
 
 //Customer
 router.post('/calculate-shipping-fee', authUser.isLogin, orderController.calculateShippingFee);
-router.post('/add-new-order', authUser.isLogin, orderController.addNewOrder);
+router.post('/add-new-order', authUser.attachUser, orderController.addNewOrder);
 router.get('/get-order-by-user', authUser.isLogin, orderController.getOrderByUserId);
 router.get('/get-order-detail-by-code/:code', authUser.isLogin, orderController.getOrderDetailByCode);
 router.get('/destroy-order/:id', authUser.isLogin, orderController.destroyOrder);

@@ -17,7 +17,7 @@ const OrderSchema = mongoose.Schema({
     o_payment: { type: String, default: 'pay-cash' },
     o_shippingFee: Number,
     o_totalPrice: Number,
-    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: false },
 }, {
     timestamps: true
 });

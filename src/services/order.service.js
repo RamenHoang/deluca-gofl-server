@@ -23,7 +23,7 @@ let addNewOrder = async (data, user) => {
     data = {
         ...data,
         o_code: randomString.generate(7),
-        user: user._id,
+        user: user ? user._id : null,
         o_totalPrice: data.totalPrice
     }
 
