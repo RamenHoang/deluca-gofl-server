@@ -2,6 +2,8 @@ const dotenv = require("dotenv");
 dotenv.config();
 const nodemailer = require("nodemailer");
 const UserModel = require("../models/user.model");
+const ProductModel = require("../models/product.model");
+const SizeModel = require("../models/size.model");
 
 let sendMail = (to, linkVerify, user) => {
   let transporter = nodemailer.createTransport({
@@ -108,7 +110,7 @@ let sendMailContact = (to, data) => {
   return transporter.sendMail(mailOptions);
 };
 
-let sendMailOrder = (order, orderDetail) => {
+let sendMailOrder = async (order, orderDetail) => {
   let transporter = nodemailer.createTransport({
     host: "smtp.ethereal.email",
     port: 587,
@@ -119,6 +121,16 @@ let sendMailOrder = (order, orderDetail) => {
       pass: process.env.PASS_MAIL,
     },
   });
+
+  const products = [];
+
+  for (let i = 0; i < orderDetail.products.length; i++) {
+    const product = orderDetail.products[i];
+    const productDetails = await ProductModel.findById(product.product);
+    const sizeDetails = await SizeModel.findById(product.size);
+
+    products.push(`${productDetails.p_name} - ${sizeDetails.name}`);
+  }
 
   let address = [
     order.o_shippingHouseNumber,
@@ -141,6 +153,8 @@ let sendMailOrder = (order, orderDetail) => {
       <p><strong>Phương thức thanh toán:</strong> ${order.o_payment === 'pay-cash' ? 'Thanh toán khi nhận hàng' : 'Thanh toán QR Code'}</p>
       <p><strong>Tổng tiền:</strong> ${order.o_totalPrice.toLocaleString('vi-VN')} đ</p>
       <p><strong>Trạng thái đơn hàng:</strong> ${order.o_status}</p>
+      <p><strong>Sản phẩm:</strong></p>
+      ${products.map(product => `<p>${product}</p>`).join('\n')}
       <p><strong>Thời gian đặt hàng:</strong> ${new Date(order.createdAt).toLocaleString('vi-VN')}</p>
       <hr>
       <p>Vui lòng kiểm tra hệ thống để xử lý đơn hàng sớm nhất.</p>
@@ -154,8 +168,6 @@ let sendMailOrder = (order, orderDetail) => {
       transporter.sendMail(mailOptions);
     });
   });
-
-  return transporter.sendMail(mailOptions);
 };
 
 module.exports = {

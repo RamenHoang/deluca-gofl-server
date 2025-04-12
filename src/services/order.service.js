@@ -12,7 +12,6 @@ let shippingFee = (method) => {
 }
 
 let addNewOrder = async (data, user) => {
-
     let productDetail = [...data.products];
     let products = [];
     productDetail.map(v => {
