@@ -226,7 +226,7 @@ ProductSchema.statics = {
                     0, 
                     { $divide: ["$p_promotion", "$p_price"] }
                   ]},
-                  0.51
+                  0.5
                 ]
               }
 

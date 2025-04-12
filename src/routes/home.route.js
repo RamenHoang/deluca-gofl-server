@@ -23,4 +23,7 @@ router.get('/get-discount-products', homeController.getDiscountProducts);
 router.get('/search-books', homeController.searchBooks);
 router.get('/get-books-by-cate-ids', homeController.getBooksByCateIds);
 router.get('/get-payment-info', homeController.getPaymentInfo);
+
+router.get('/min-max-price', homeController.getMinMaxPrice);
+
 module.exports = router;

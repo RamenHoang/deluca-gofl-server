@@ -1,6 +1,7 @@
 const paymentModel = require('../models/payment.model');
 const homeService = require('./../services/home.service');
 const categoryModel = require('./../models/category.model');
+const productModel = require('./../models/product.model');
 
 let getAllCategories = async (req, res) => {
     try {
@@ -211,6 +212,26 @@ let getPaymentInfo = async (req, res) => {
     }
 }
 
+let getMinMaxPrice = async (req, res) => {
+    try {
+        let minMaxPrice = await productModel.aggregate([
+            {
+                $group: {
+                    _id: null,
+                    maxPrice: { $max: "$p_price" }
+                }
+            }
+        ]);
+
+        minMaxPrice = minMaxPrice[0];
+        minMaxPrice.minPrice = 0;
+
+        return res.status(200).json(minMaxPrice);
+    } catch (error) {
+        return res.status(500).json(error);
+    }
+}
+
 module.exports = {
     getAllCategories,
     getNewBooks,
@@ -229,4 +250,5 @@ module.exports = {
     getBooksByCateIds,
     getPaymentInfo,
     getSubCategories,
+    getMinMaxPrice,
 }
