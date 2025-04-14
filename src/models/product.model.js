@@ -302,10 +302,10 @@ ProductSchema.statics = {
             .exec();
     },
 
-    getBooksRelated(price, cateId, currentBookId) {
+    getBooksRelated(price, cateIds, currentBookId) {
         return this.find({
             $and: [
-                { category: cateId },
+                { category: { $in: cateIds } },
                 {
                     $or: [
                         { p_price: price },

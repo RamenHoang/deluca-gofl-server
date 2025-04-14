@@ -107,7 +107,7 @@ let getBooksWithPrice = async (bookId) => {
 
 let getBooksRelated = async (bookId) => {
     let book = await productModel.getByIdProduct(bookId);
-    let books = await productModel.getBooksRelated(book.p_price, book.category._id, book._id);
+    let books = await productModel.getBooksRelated(book.p_price, book.category.map(item => item._id), book._id);
 
     return { message: 'SUCCESS', data: books };
 }
