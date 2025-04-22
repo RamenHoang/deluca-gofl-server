@@ -428,7 +428,7 @@ ProductSchema.statics = {
     },
 
     async getDiscountProducts(page) {
-        const limit = 8;
+        const limit = 16;
 
         if (page === undefined || page < 1) {
             page = 1;
