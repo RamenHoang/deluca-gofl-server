@@ -122,7 +122,7 @@ ProductSchema.statics = {
     },
 
     async getNewBooks(page) {
-        const limit = 8;
+        const limit = 16;
 
         if (page === undefined || page < 1) {
             page = 1;
@@ -173,7 +173,7 @@ ProductSchema.statics = {
                 path: 'variants.sizes.size',
                 model: 'Size'
             })
-            .limit(7).exec();
+            .limit(16).exec();
     },
 
     updateProductById(id, data) {
